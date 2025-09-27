@@ -28,5 +28,8 @@ public class DataLoader implements CommandLineRunner {
         examService.addAll(examList);
 
         System.out.println("--> Exams loaded: " + examList.size());
+
+        //Como ler os arquivos md
+        //  Ler por processamento, carregar em memória e incluir
     }
 }
