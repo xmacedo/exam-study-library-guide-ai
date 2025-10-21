@@ -21,7 +21,7 @@ public class StudyController {
     @GetMapping("/")
     public String index(Model model) {
         List<String> topics = studyService.getAvailableTopics();
-        model.addAttribute("topics", topics);
+        //model.("topics", topics);
         return "index";
     }
 

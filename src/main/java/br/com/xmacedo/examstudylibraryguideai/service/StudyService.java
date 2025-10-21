@@ -1,7 +1,15 @@
 package br.com.xmacedo.examstudylibraryguideai.service;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class StudyService {
@@ -43,12 +51,12 @@ public class StudyService {
     public String askQuestion(String question) {
         // Retrieve relevant documents
         List<Document> relevantDocs = vectorStore.similaritySearch(
-                SearchRequest.query(question).withTopK(5)
+                SearchRequest.builder().query(question).topK(5).build()
         );
 
         // Combine document content
         String documents = relevantDocs.stream()
-                .map(doc -> "Source: " + doc.getMetadata().get("source") + "\n" + doc.getContent())
+                .map(doc -> "Source: " + doc.getMetadata().get("source") + "\n" + doc.getFormattedContent())
                 .collect(Collectors.joining("\n\n---\n\n"));
 
         // Create prompt with context
