@@ -15,37 +15,39 @@ import java.util.stream.Collectors;
 public class StudyService {
     private final ChatClient chatClient;
     private final VectorStore vectorStore;
+    private final TopicService topicService;
 
     private static final String SYSTEM_PROMPT = """
-        You are an AWS Solutions Architect Associate exam expert assistant. 
-        You help students prepare for the AWS SAA-C03 certification exam.
-        
-        Use the provided AWS study materials to answer questions accurately and comprehensively.
-        Focus on:
-        - Key AWS services and their use cases
-        - Best practices and architectural patterns
-        - Common exam scenarios and decision factors
-        - Cost optimization strategies
-        - Security and compliance considerations
-        
-        If the question is not covered in the study materials, clearly state that and provide general guidance.
-        Always structure your answers clearly with bullet points or numbered lists when appropriate.
-        """;
+            You are an AWS Solutions Architect Associate exam expert assistant. 
+            You help students prepare for the AWS SAA-C03 certification exam.
+            
+            Use the provided AWS study materials to answer questions accurately and comprehensively.
+            Focus on:
+            - Key AWS services and their use cases
+            - Best practices and architectural patterns
+            - Common exam scenarios and decision factors
+            - Cost optimization strategies
+            - Security and compliance considerations
+            
+            If the question is not covered in the study materials, clearly state that and provide general guidance.
+            Always structure your answers clearly with bullet points or numbered lists when appropriate.
+            """;
 
     private static final String RAG_PROMPT_TEMPLATE = """
-        {system_prompt}
-        
-        Based on the following AWS study materials:
-        {documents}
-        
-        Question: {question}
-        
-        Please provide a comprehensive answer based on the study materials above.
-        """;
+            {system_prompt}
+            
+            Based on the following AWS study materials:
+            {documents}
+            
+            Question: {question}
+            
+            Please provide a comprehensive answer based on the study materials above.
+            """;
 
-    public StudyService(ChatClient.Builder chatClientBuilder, VectorStore vectorStore) {
+    public StudyService(ChatClient.Builder chatClientBuilder, VectorStore vectorStore, TopicService topicService) {
         this.chatClient = chatClientBuilder.build();
         this.vectorStore = vectorStore;
+        this.topicService = topicService;
     }
 
     public String askQuestion(String question) {
@@ -69,25 +71,5 @@ public class StudyService {
 
         // Get response from AI
         return chatClient.prompt(prompt).call().content();
-    }
-
-    public List<String> getAvailableTopics() {
-        return List.of(
-                "Compute Services (EC2, Lambda, ECS, EKS)",
-                "Storage Services (S3, EBS, EFS, FSx)",
-                "Database Services (RDS, DynamoDB, ElastiCache)",
-                "Networking & VPC",
-                "Security & Identity (IAM, KMS, Cognito)",
-                "Application Integration (SQS, SNS, EventBridge)",
-                "Monitoring & Logging (CloudWatch, CloudTrail)",
-                "Management & Governance (CloudFormation, Organizations)",
-                "Content Delivery (CloudFront, Route 53)",
-                "Migration & Hybrid Solutions",
-                "Analytics & Machine Learning",
-                "Cost Optimization",
-                "Well-Architected Framework",
-                "Disaster Recovery",
-                "Exam Tips & Scenarios"
-        );
     }
 }
