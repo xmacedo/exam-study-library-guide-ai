@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Log4j2
@@ -51,7 +52,7 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void loadExams() throws IOException {
-        log.info("--> Loading exams...");
+        log.info("--> Exams Loading...");
         InputStream inputStream = getClass().getResourceAsStream(PATH_FOR_EXAMS);
 
         List<Exam> examList = mapper.readValue(inputStream, new TypeReference<>() {});
@@ -60,7 +61,7 @@ public class DataLoader implements CommandLineRunner {
         log.info("--> Exams loaded: {}", examList.size());
     }
     private void loadTopicDocuments() {
-
+        log.info("--> Topics Loading...");
         File directory = new File(PATH_FOR_DOCUMENTS);
 
         if (!directory.exists() || !directory.isDirectory()) {
@@ -76,18 +77,15 @@ public class DataLoader implements CommandLineRunner {
             for (File file : files) {
                 if (file.isFile()) {
                     String fileName = file.getName();
-                    log.info("File: {}", fileName);
+                    log.info("File Name loading -->{}", fileName);
 
                     String[] splitFileName = fileName.split("-");
 
                     String examId = splitFileName[0];
-                    String topicName = splitFileName[1].replace("_", " ");
+                    String topicName = splitFileName[1].replace("_", " ")
+                            .replace(".md","");
 
-                    Topic topic = new Topic();
-                    topic.setTopic(topicName);
-                    topic.setExam(examService.getById(Long.parseLong(examId)));
-
-                    topicList.add(topic);
+                    topicList.add(buildNewTopic(examId, topicName));
 
                 } else if (file.isDirectory()) {
                     log.info("Directory: {}", file.getName());
@@ -99,5 +97,9 @@ public class DataLoader implements CommandLineRunner {
             log.info("--> Topics loaded: {}", topicList.size());
         }
 
+    }
+
+    private Topic buildNewTopic(String examId, String topicName) {
+        return new Topic(examService.getById(Long.parseLong(examId)), topicName);
     }
 }
