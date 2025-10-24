@@ -49,19 +49,6 @@
             <artifactId>spring-ai-core</artifactId>
             <version>1.0.0-M6</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>-->
-<!--            <version>1.0.0-M6</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-tika-document-reader</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-pdf-document-reader</artifactId>-->
-<!--        </dependency>-->
 
         <!-- Development Tools -->
         <dependency>

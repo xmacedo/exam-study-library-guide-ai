@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class StudyService {
     private final ChatClient chatClient;
     private final VectorStore vectorStore;
-    private final TopicService topicService;
 
     private static final String SYSTEM_PROMPT = """
             You are an AWS Solutions Architect Associate exam expert assistant. 
@@ -44,10 +43,9 @@ public class StudyService {
             Please provide a comprehensive answer based on the study materials above.
             """;
 
-    public StudyService(ChatClient.Builder chatClientBuilder, VectorStore vectorStore, TopicService topicService) {
+    public StudyService(ChatClient.Builder chatClientBuilder, VectorStore vectorStore) {
         this.chatClient = chatClientBuilder.build();
         this.vectorStore = vectorStore;
-        this.topicService = topicService;
     }
 
     public String askQuestion(String question) {

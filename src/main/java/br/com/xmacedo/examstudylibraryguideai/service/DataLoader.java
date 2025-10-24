@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @Log4j2
@@ -25,7 +24,7 @@ public class DataLoader implements CommandLineRunner {
     private static final String PATH_FOR_EXAMS = "/data/exam.json";
     private static final String PATH_FOR_DOCUMENTS = "./src/main/resources/documents";
 
-    public DataLoader(ExamService examService,TopicService topicService) {
+    public DataLoader(ExamService examService, TopicService topicService) {
         this.examService = examService;
         this.topicService = topicService;
         this.mapper = new ObjectMapper();
@@ -55,11 +54,13 @@ public class DataLoader implements CommandLineRunner {
         log.info("--> Exams Loading...");
         InputStream inputStream = getClass().getResourceAsStream(PATH_FOR_EXAMS);
 
-        List<Exam> examList = mapper.readValue(inputStream, new TypeReference<>() {});
+        List<Exam> examList = mapper.readValue(inputStream, new TypeReference<>() {
+        });
         examService.addAll(examList);
 
         log.info("--> Exams loaded: {}", examList.size());
     }
+
     private void loadTopicDocuments() {
         log.info("--> Topics Loading...");
         File directory = new File(PATH_FOR_DOCUMENTS);
@@ -83,7 +84,7 @@ public class DataLoader implements CommandLineRunner {
 
                     String examId = splitFileName[0];
                     String topicName = splitFileName[1].replace("_", " ")
-                            .replace(".md","");
+                            .replace(".md", "");
 
                     topicList.add(buildNewTopic(examId, topicName));
 
