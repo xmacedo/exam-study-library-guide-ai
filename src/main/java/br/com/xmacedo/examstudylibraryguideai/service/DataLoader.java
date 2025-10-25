@@ -4,8 +4,10 @@ import br.com.xmacedo.examstudylibraryguideai.model.Exam;
 import br.com.xmacedo.examstudylibraryguideai.model.Topic;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +17,18 @@ import java.util.List;
 
 @Component
 @Log4j2
+//@Configuration
 public class DataLoader implements CommandLineRunner {
 
     private final ExamService examService;
     private final TopicService topicService;
     private final ObjectMapper mapper;
 
+//    @Value("${app.documents.patterns:*.md}")
     private static final String PATH_FOR_EXAMS = "/data/exam.json";
-    private static final String PATH_FOR_DOCUMENTS = "./src/main/resources/documents";
+
+    @Value("${app.documents.path:../}")
+    private static String PATH_FOR_DOCUMENTS;
 
     public DataLoader(ExamService examService, TopicService topicService) {
         this.examService = examService;
