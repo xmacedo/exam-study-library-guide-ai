@@ -1,7 +1,10 @@
 package br.com.xmacedo.examstudylibraryguideai.config;
 
+import br.com.xmacedo.examstudylibraryguideai.model.Exam;
+import br.com.xmacedo.examstudylibraryguideai.model.Topic;
 import br.com.xmacedo.examstudylibraryguideai.service.ExamService;
 import br.com.xmacedo.examstudylibraryguideai.service.TopicService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.ai.document.Document;
@@ -13,11 +16,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 public class DocumentConfig {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DocumentConfig.class);
 
     private final VectorStore vectorStore;
     private final ExamService examService;
@@ -30,8 +36,8 @@ public class DocumentConfig {
     @Value("${app.exams.path:/data/exam.json}")
     private static final String PATH_FOR_EXAMS = "/data/exam.json";
 
-    @Value("${app.documents.path:../}")
-    private static String PATH_FOR_DOCUMENTS;
+    @Value("${app.documents.path:./src/main/resources/documents}")
+    private static String PATH_FOR_DOCUMENTS = "./src/main/resources/documents/";
 
     public DocumentConfig(VectorStore vectorStore, ExamService examService, TopicService topicService, ObjectMapper mapper) {
         this.vectorStore = vectorStore;
@@ -43,17 +49,34 @@ public class DocumentConfig {
     @PostConstruct
     public void loadDocuments() {
         try {
-            loadAwsStudyDocuments();
+            log.info("### Start DataLoader ### ");
+            loadExams();
+            loadStudyDocuments();
+
+            log.info("### END DataLoader ### ");
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load AWS study documents", e);
+            throw new RuntimeException("Failed to load study documents", e);
         }
     }
 
-    private void loadAwsStudyDocuments() throws IOException{
+    private void loadExams() throws IOException {
+        log.info("--> Exams Loading...");
+        InputStream inputStream = getClass().getResourceAsStream(PATH_FOR_EXAMS);
+
+        List<Exam> examList = mapper.readValue(inputStream, new TypeReference<>() {
+        });
+        examService.addAll(examList);
+
+        log.info("--> Exams loaded: {}", examList.size());
+    }
+
+    private void loadStudyDocuments() throws IOException{
+        log.info("--> Loading study documents...");
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("file:" + PATH_FOR_DOCUMENTS + PATTERN_FOR_DOCUMENTS);
 
         List<Document> documents = new ArrayList<>();
+        List<Topic> topicList = new ArrayList<>();
 
         for (Resource resource : resources) {
             if (resource.exists() && resource.isReadable()) {
@@ -62,8 +85,17 @@ public class DocumentConfig {
 
                 // Add metadata to identify the source file
                 for (Document doc : docs) {
+                    log.info("Document: {}", resource.getFilename());
                     doc.getMetadata().put("source", resource.getFilename());
-                    doc.getMetadata().put("type", "aws-study-material");
+                    doc.getMetadata().put("type", "aws-study-material"); //todo need to change for other exam
+
+                    String[] splitFileName = resource.getFilename().split("-");
+
+                    String examId = splitFileName[0];
+                    String topicName = splitFileName[1].replace("_", " ")
+                            .replace(".md", "");
+
+                    topicList.add(buildNewTopic(examId, topicName));
                 }
 
                 documents.addAll(docs);
@@ -77,10 +109,16 @@ public class DocumentConfig {
 
             // Add documents to vector store
             vectorStore.add(splitDocuments);
+            log.info("Loaded {} document chunks from {} study files", splitDocuments.size(), resources.length);
 
-            System.out.println("Loaded " + splitDocuments.size() + " document chunks from " + resources.length + " study files");
+            topicService.addAll(topicList);
+            log.info("--> Topics loaded: {}", topicList.size());
         } else {
-            System.out.println("No study documents found in path: " + PATH_FOR_DOCUMENTS);
+            log.info("No study documents found in path: {}", PATH_FOR_DOCUMENTS);
         }
+    }
+
+    private Topic buildNewTopic(String examId, String topicName) {
+        return new Topic(examService.getById(Long.parseLong(examId)), topicName);
     }
 }
