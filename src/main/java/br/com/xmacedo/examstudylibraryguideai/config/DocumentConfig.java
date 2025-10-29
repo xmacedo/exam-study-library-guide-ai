@@ -70,7 +70,7 @@ public class DocumentConfig {
         log.info("--> Exams loaded: {}", examList.size());
     }
 
-    private void loadStudyDocuments() throws IOException{
+    private void loadStudyDocuments() throws IOException {
         log.info("--> Loading study documents...");
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources("file:" + PATH_FOR_DOCUMENTS + PATTERN_FOR_DOCUMENTS);
@@ -86,8 +86,6 @@ public class DocumentConfig {
                 // Add metadata to identify the source file
                 for (Document doc : docs) {
                     log.info("Document: {}", resource.getFilename());
-                    doc.getMetadata().put("source", resource.getFilename());
-                    doc.getMetadata().put("type", "aws-study-material"); //todo need to change for other exam
 
                     String[] splitFileName = resource.getFilename().split("-");
 
@@ -95,7 +93,12 @@ public class DocumentConfig {
                     String topicName = splitFileName[1].replace("_", " ")
                             .replace(".md", "");
 
-                    topicList.add(buildNewTopic(examId, topicName));
+                    Exam examById = examService.getById(Long.parseLong(examId));
+                    String companyName = examById.getCompany();
+                    topicList.add(buildNewTopic(examById, topicName));
+
+                    doc.getMetadata().put("source", resource.getFilename());
+                    doc.getMetadata().put("type", companyName + "-study-material");
                 }
 
                 documents.addAll(docs);
@@ -118,7 +121,7 @@ public class DocumentConfig {
         }
     }
 
-    private Topic buildNewTopic(String examId, String topicName) {
-        return new Topic(examService.getById(Long.parseLong(examId)), topicName);
+    private Topic buildNewTopic(Exam exam, String topicName) {
+        return new Topic(exam, topicName);
     }
 }
