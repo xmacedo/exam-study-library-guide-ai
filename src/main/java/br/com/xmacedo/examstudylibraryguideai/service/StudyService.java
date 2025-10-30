@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class StudyService {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(StudyService.class);
     private final ChatClient chatClient;
     private final VectorStore vectorStore;
 
@@ -58,6 +59,8 @@ public class StudyService {
         String documents = relevantDocs.stream()
                 .map(doc -> "Source: " + doc.getMetadata().get("source") + "\n" + doc.getFormattedContent())
                 .collect(Collectors.joining("\n\n---\n\n"));
+
+        log.info("Documents: {}", documents);
 
         // Create prompt with context
         PromptTemplate promptTemplate = new PromptTemplate(RAG_PROMPT_TEMPLATE);
