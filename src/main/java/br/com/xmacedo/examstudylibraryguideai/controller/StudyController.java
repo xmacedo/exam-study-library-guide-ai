@@ -1,6 +1,5 @@
 package br.com.xmacedo.examstudylibraryguideai.controller;
 
-import br.com.xmacedo.examstudylibraryguideai.config.DocumentConfig;
 import br.com.xmacedo.examstudylibraryguideai.service.StudyService;
 import br.com.xmacedo.examstudylibraryguideai.service.TopicService;
 import org.springframework.stereotype.Controller;

@@ -33,6 +33,7 @@ public class StudyService {
             Always structure your answers clearly with bullet points or numbered lists when appropriate.
             """;
 
+    //todo need to change based on the exam and documents
     private static final String RAG_PROMPT_TEMPLATE = """
             {system_prompt}
             
