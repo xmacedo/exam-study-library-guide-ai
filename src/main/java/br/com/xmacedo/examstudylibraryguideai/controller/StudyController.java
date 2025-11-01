@@ -31,10 +31,10 @@ public class StudyController {
 
     @PostMapping("/ask")
     @ResponseBody
-    public String askQuestion(@RequestParam String question) {
+    public String askQuestion(@RequestParam String question, @RequestParam Integer examId) {
         log.info("Question received: {}", question);
         try {
-            return studyService.askQuestion(question);
+            return studyService.askQuestion(question, examId);
         } catch (Exception e) {
             return "Error processing your question: " + e.getMessage();
         }

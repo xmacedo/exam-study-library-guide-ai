@@ -33,11 +33,11 @@ public class StudyService {
             Always structure your answers clearly with bullet points or numbered lists when appropriate.
             """;
 
-    //todo need to change based on the exam and documents
+
     private static final String RAG_PROMPT_TEMPLATE = """
             {system_prompt}
             
-            Based on the following AWS study materials:
+            Based on the following {exam_topic} study materials:
             {documents}
             
             Question: {question}
@@ -50,12 +50,13 @@ public class StudyService {
         this.vectorStore = vectorStore;
     }
 
-    public String askQuestion(String question) {
+    public String askQuestion(String question, Integer examId) {
         // Retrieve relevant documents
         List<Document> relevantDocs = vectorStore.similaritySearch(
                 SearchRequest.builder().query(question).topK(5).build()
         );
 
+        // todo change how to get documents, get by ID
         // Combine document content
         String documents = relevantDocs.stream()
                 .map(doc -> "Source: " + doc.getMetadata().get("source") + "\n" + doc.getFormattedContent())
@@ -68,7 +69,8 @@ public class StudyService {
         Prompt prompt = promptTemplate.create(Map.of(
                 "system_prompt", SYSTEM_PROMPT,
                 "documents", documents.isEmpty() ? "No relevant study materials found." : documents,
-                "question", question
+                "question", question,
+                "exam_topic",""
         ));
 
         // Get response from AI
