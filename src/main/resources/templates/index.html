@@ -15,6 +15,7 @@
             padding: 20px;
             background-color: #f8f9fa;
         }
+
         .question {
             background-color: #007bff;
             color: white;
@@ -25,13 +26,14 @@
             margin-left: auto;
             word-wrap: break-word;
         }
+
         .answer {
             background-color: white;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
             border-left: 4px solid #28a745;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         /* Markdown styling for answer content */
@@ -41,10 +43,21 @@
             margin-bottom: 0.5rem;
         }
 
-        .answer h1 { font-size: 1.5rem; }
-        .answer h2 { font-size: 1.3rem; }
-        .answer h3 { font-size: 1.1rem; }
-        .answer h4, .answer h5, .answer h6 { font-size: 1rem; }
+        .answer h1 {
+            font-size: 1.5rem;
+        }
+
+        .answer h2 {
+            font-size: 1.3rem;
+        }
+
+        .answer h3 {
+            font-size: 1.1rem;
+        }
+
+        .answer h4, .answer h5, .answer h6 {
+            font-size: 1rem;
+        }
 
         .answer p {
             margin-bottom: 0.8rem;
@@ -125,18 +138,22 @@
             border-top: 1px solid #ddd;
             margin: 1.5rem 0;
         }
+
         .loading {
             display: none;
             text-align: center;
             margin: 20px 0;
         }
+
         .topic-pills {
             margin-bottom: 20px;
         }
+
         .topic-pill {
             margin: 2px;
             cursor: pointer;
         }
+
         pre {
             background-color: #f4f4f4;
             padding: 10px;
@@ -217,16 +234,17 @@
 
 <script>
     // Wait for marked to be loaded and configure it
-    window.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('DOMContentLoaded', function () {
         // Configure marked for better markdown rendering (v12+ API)
         if (typeof marked !== 'undefined') {
             marked.use({
-                breaks: true,        // Convert \n to <br>
+                breaks: true,       // Convert \n to <br>
                 gfm: true,          // GitHub Flavored Markdown
                 headerIds: false,   // Don't add ids to headers
             });
         }
     });
+
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
             askQuestion();
@@ -271,6 +289,7 @@
 
         // Clear input and show loading
         questionInput.value = '';
+
         loading.style.display = 'block';
 
         try {
