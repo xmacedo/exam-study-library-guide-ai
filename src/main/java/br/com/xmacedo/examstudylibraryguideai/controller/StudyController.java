@@ -1,5 +1,7 @@
 package br.com.xmacedo.examstudylibraryguideai.controller;
 
+import br.com.xmacedo.examstudylibraryguideai.model.Exam;
+import br.com.xmacedo.examstudylibraryguideai.service.ExamService;
 import br.com.xmacedo.examstudylibraryguideai.service.StudyService;
 import br.com.xmacedo.examstudylibraryguideai.service.TopicService;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class StudyController {
@@ -17,16 +20,22 @@ public class StudyController {
 
     private final StudyService studyService;
     private final TopicService topicService;
+    private final ExamService examService;
 
-    public StudyController(StudyService studyService, TopicService topicService) {
+    public StudyController(StudyService studyService, TopicService topicService, ExamService examService) {
         this.studyService = studyService;
         this.topicService = topicService;
+        this.examService = examService;
     }
 
     @GetMapping("/")
     public String index(Model model) {
         List<String> topics = topicService.getAvailableTopics();
         model.addAttribute("topics", topics);
+
+        List<String> exams = examService.getAll().stream().map(Exam::getCompany).toList();
+        model.addAttribute("exams", exams);
+
         return "index";
     }
 

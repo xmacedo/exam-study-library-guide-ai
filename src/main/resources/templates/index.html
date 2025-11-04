@@ -172,7 +172,17 @@
             <p class="text-center text-muted">Ask questions about Any services and exam topics</p>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-12">
+            <h5>Available Exam Companies:</h5>
+            <div class="topic-pills">
+                    <span th:each="exam : ${exmas}"
+                          class="badge bg-secondary topic-pill"
+                          th:text="${exams}"
+                          onclick="suggestQuestion(this.textContent)"></span>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12">
             <h5>Available Topics:</h5>
