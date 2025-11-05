@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class StudyController {
@@ -33,8 +32,12 @@ public class StudyController {
         List<String> topics = topicService.getAvailableTopics();
         model.addAttribute("topics", topics);
 
+        log.info("--> Available topics: {}", topics.size());
+
         List<String> exams = examService.getAll().stream().map(Exam::getCompany).toList();
         model.addAttribute("exams", exams);
+
+        log.info("--> Available exams: {}", exams.size());
 
         return "index";
     }

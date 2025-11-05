@@ -176,9 +176,9 @@
         <div class="col-12">
             <h5>Available Exam Companies:</h5>
             <div class="topic-pills">
-                    <span th:each="exam : ${exmas}"
+                    <span th:each="exam : ${exams}"
                           class="badge bg-secondary topic-pill"
-                          th:text="${exams}"
+                          th:text="${exam}"
                           onclick="suggestQuestion(this.textContent)"></span>
             </div>
         </div>
