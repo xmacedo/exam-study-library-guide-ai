@@ -15,17 +15,22 @@ The idea is to create a placeholder and contain a library of study guides for ex
 
 1. Install Ollama from [https://ollama.ai](https://ollama.ai)
 2. Pull the required models:
-   ```bash
-   ollama pull llama3.2
-   ollama pull nomic-embed-text
-   ```
+    ```bash
+    ollama pull qwen2.5:32b
+    ollama pull nomic-embed-text
+    ```
 
-### Installing Java
+### Installing Java 
 
-
+```bash
+ brew install --cask oracle-jdk@25
+```
 
 ### Installing Maven
-
+    
+```bash
+ brew install maven
+```
 
 ## Setup and Running
 
